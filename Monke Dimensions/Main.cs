@@ -16,16 +16,11 @@ namespace Monke_Dimensions
         {
             new Harmony(GUID).PatchAll(Assembly.GetExecutingAssembly());
         }
-
-        public static void Init()
-        {
-            // Do setup stuff thing i dont fucking know
-        }
     }
 
     [HarmonyPatch(typeof(GorillaTagger), "Awake")]
     internal class GorillaTagInitDone
     {
-        public static void Postfix() => DimensionController.SkibidiToilet();
+        public async static void Postfix() => await DimensionController.LoadDimensions();
     }
 }

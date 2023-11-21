@@ -12,7 +12,7 @@ namespace Monke_Dimensions
     {
         // https://stackoverflow.com/questions/20520238
 
-        public static void SkibidiToilet()
+        public static async Task LoadDimensions()
         {
             Debug.Log("-> Loaded Dimension(s): <-");
 
@@ -45,6 +45,8 @@ namespace Monke_Dimensions
                 }
             }
             Debug.Log("-> Loaded dimensions... <-");
+
+            await Task.Yield(); // Stupid warning >:(
         }
     }
 }
