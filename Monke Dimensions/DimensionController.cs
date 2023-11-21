@@ -44,8 +44,6 @@ namespace Monke_Dimensions
                     }
                 }
             }
-            Debug.Log("-> Loaded dimensions... <-");
-
             await Task.Yield(); // Stupid warning >:(
         }
     }
