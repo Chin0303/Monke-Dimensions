@@ -9,12 +9,14 @@ namespace Monke_Dimensions
 {
     internal class DimensionController
     {
+        // https://stackoverflow.com/questions/20520238
+
         public static async Task LoadDimensions()
         {
             Debug.Log("-> Loaded Dimension(s): <-");
 
             string path = Path.Combine(Path.GetDirectoryName(typeof(DimensionController).Assembly.Location), "Dimensions");
-            var dimensionFiles = Directory.GetFiles(path, "*.dimension");
+            var dimensionFiles = Directory.GetFiles(path, "*.dimension"); // .dimension is actually just a .zip but renamed lol
 
             foreach (string dimensionFile in dimensionFiles)
             {
@@ -24,16 +26,21 @@ namespace Monke_Dimensions
                 {
                     ZipArchiveEntry packageEntry = zip.GetEntry("Package.json");
 
-                    if(packageEntry == null)
+                    if (packageEntry == null)
                     {
-                        Debug.LogError("Fuck you: " + currentPath); // if people decide to mess with the json
+                        Debug.LogError("Invalid dimension: " + currentPath);
                         continue;
                     }
 
+                    using (StreamReader packageReader = new StreamReader(packageEntry.Open()))
+                    {
+                        DimensionPackage package = Newtonsoft.Json.JsonConvert.DeserializeObject<DimensionPackage>(packageReader.ReadToEnd());
+                        Debug.Log($"-> Name: {package.Name}, Author: {package.Author} <-");
+                    }
                     await LoadAndInstantiateAssets(dimensionFile);
                 }
             }
-            await Task.Yield();
+            await Task.Yield(); // Stupid warning >:(
         }
 
 
