@@ -1,6 +1,9 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using BepInEx;
 using HarmonyLib;
+using Monke_Dimensions.Behaviours;
+using UnityEngine;
 
 namespace Monke_Dimensions
 {
@@ -12,15 +15,18 @@ namespace Monke_Dimensions
             NAME = "Monke Dimensions",
             VERSION = "1.0.0";
 
-        internal Main()
+        void Awake()
         {
             new Harmony(GUID).PatchAll(Assembly.GetExecutingAssembly());
+            Utilla.Events.GameInitialized += setup;
         }
-    }
 
-    [HarmonyPatch(typeof(GorillaTagger), "Awake")]
-    internal class GorillaTagInitDone
-    {
-        public async static void Postfix() => await DimensionController.LoadDimensions();
+        public void setup(object sender, EventArgs e)
+        {
+            AssetLoader.LoadAssets("Monke_Dimensions.Resources.stand");
+            GameObject Meow = new GameObject("DimensionThing");
+            Comps.SetupComps();
+            Meow.AddComponent<DimensionManager>();
+        }
     }
 }
