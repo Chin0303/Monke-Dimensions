@@ -24,8 +24,10 @@ namespace Monke_Dimensions.Behaviours
         public string currentSelectedDimensionName;
         private GameObject[] currentLoadedDimensionObjects;
 
-        private int currentPage = 1;
-        private List<string> dimensionNames;
+        public int currentPage = 1;
+        public List<string> dimensionNames;
+
+        private bool inDimension;
 
         private void Awake()
         {
@@ -37,10 +39,9 @@ namespace Monke_Dimensions.Behaviours
 
         public void LoadDimensions()
         {
-            Comps.LeftBtn.AddComponent<PageButton>();
-            Comps.RightBtn.AddComponent<PageButton>();
-            Comps.LoadBtn.AddComponent<LoadButton>();
-            Comps.BackBtn.AddComponent<BackButton>();
+            Comps.LeftBtn.AddComponent<Button>();
+            Comps.RightBtn.AddComponent<Button>();
+            Comps.LoadBtn.AddComponent<Button>();
 
             Debug.Log("-> Found Dimension(s): <-");
 
@@ -77,6 +78,7 @@ namespace Monke_Dimensions.Behaviours
 
                     dimensions.Add(package.Name, package);
                     dimensionNames.Add(package.Name);
+                    //SwitchPage(1);
                 }
             }
         }
@@ -137,22 +139,36 @@ namespace Monke_Dimensions.Behaviours
 
             foreach (GameObject loadedObject in currentLoadedDimensionObjects)
             {
-                Instantiate(loadedObject, loadedDimensionObj.transform);
+                GameObject instantiatedObject= Instantiate(loadedObject, loadedDimensionObj.transform);
+                AddGorillaSurfaceOverride(instantiatedObject);
             }
             TeleportDimension.OnTeleport(currentPackage);
+        }
+        private void AddGorillaSurfaceOverride(GameObject obj)
+        {
+            obj.AddComponent<GorillaSurfaceOverride>();
+
+            foreach (Transform child in obj.transform)
+            {
+                AddGorillaSurfaceOverride(child.gameObject);
+            }
         }
 
         public void LoadSelectedDimension(string dimensionName)
         {
-            UnloadCurrentDimension();
-            Comps.LoadBtn?.SetActive(false);
-
+            if (inDimension)
+            {
+                TeleportDimension.ReturnToMonke();
+                UnloadCurrentDimension();
+                return;
+            }
             if (dimensions.TryGetValue(dimensionName, out currentPackage))
             {
                 Debug.Log($"Loading selected dimension: {currentPackage.Name} by {currentPackage.Author}");
                 string dimensionFilePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{dimensionName}.dimension");
 
                 LoadAssets(dimensionFilePath, currentPackage);
+                inDimension = true;
             }
             else
             {
@@ -162,12 +178,12 @@ namespace Monke_Dimensions.Behaviours
 
         public void UnloadCurrentDimension()
         {
-            Comps.LoadBtn?.SetActive(true);
             foreach (Transform child in loadedDimensionObj.transform)
             {
                 Destroy(child.gameObject);
             }
             currentLoadedDimensionObjects = null;
+            inDimension = false;
         }
 
         public void SwitchPage(int direction)
@@ -180,7 +196,6 @@ namespace Monke_Dimensions.Behaviours
 
             if (dimensions.TryGetValue(dimensionName, out DimensionPackage selectedDimension))
             {
-                currentSelectedDimensionName = selectedDimension.Name;
                 Comps.AuthorText.text = $"AUTHOR: {selectedDimension.Author}".ToUpper();
                 Comps.NameText.text = $"DIMENSION: {selectedDimension.Name}".ToUpper();
                 Comps.DescriptionText.text = selectedDimension.Description.ToUpper();

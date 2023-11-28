@@ -395,9 +395,8 @@
     <Compile Include="Behaviours\Comps.cs" />
     <Compile Include="Behaviours\DimensionManager.cs" />
     <Compile Include="Behaviours\TeleportDimension.cs" />
-    <Compile Include="Interaction\BackButton.cs" />
-    <Compile Include="Interaction\LoadButton.cs" />
-    <Compile Include="Interaction\PageButton.cs" />
+    <Compile Include="Interaction\ButtonType.cs" />
+    <Compile Include="Interaction\Button.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Models\DimensionPackage.cs" />
     <Compile Include="Patches\TeleportPatch.cs" />

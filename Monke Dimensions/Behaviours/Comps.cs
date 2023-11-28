@@ -14,12 +14,12 @@ namespace Monke_Dimensions.Behaviours
         public static GameObject LeftBtn;
         public static GameObject RightBtn;
         public static GameObject LoadBtn;
-        public static GameObject BackBtn;
 
         public static Text AuthorText;
         public static Text NameText;
         public static Text DescriptionText;
         public static Text StatusText;
+        //public static GameObject Credit;
 
         public static void SetupComps()
         {
@@ -27,9 +27,9 @@ namespace Monke_Dimensions.Behaviours
             AuthorText = GameObject.Find("UI/Screen/Author").GetComponent<Text>();
             StatusText = GameObject.Find("UI/Screen/Current").GetComponent<Text>();
             DescriptionText = GameObject.Find("UI/Screen/Description").GetComponent<Text>();
+            //Credit = GameObject.Find("UI/Screen/Credits");
 
             LoadBtn = GameObject.Find("Buttons/Load Btn");
-            BackBtn = GameObject.Find("Buttons/Back Btn");
 
             RightBtn = GameObject.Find("Buttons/Right Btn");
             LeftBtn = GameObject.Find("Buttons/Left Btn");

@@ -1,21 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Monke_Dimensions.Behaviours;
+﻿using Monke_Dimensions.Behaviours;
 using UnityEngine;
 
 namespace Monke_Dimensions.Interaction
 {
-    internal class PageButton : MonoBehaviour
+    internal class Button : MonoBehaviour
     {
-        public string BtnType;
+        public ButtonType BtnType;
         private float touchTime = 0f;
         private const float debounceTime = 0.25f;
         private void Start()
         {
-            BtnType = gameObject.name;
+            switch (gameObject.name)
+            {
+                case "Load Btn":
+                    BtnType = ButtonType.Load;
+                    break;
+                case "Left Btn":
+                    BtnType = ButtonType.Left;
+                    break;
+                case "Right Btn":
+                    BtnType = ButtonType.Right;
+                    break;
+                //case "Random Btn":
+                //   BtnType = ButtonType.Random;
+                //    break;
+            }
             gameObject.layer = 18;
         }
         private void OnTriggerEnter(Collider collider)
@@ -26,13 +35,16 @@ namespace Monke_Dimensions.Interaction
             {
                 GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(211, hand.isLeftHand, 0.12f);
                 GorillaTagger.Instance.StartVibration(hand.isLeftHand, GorillaTagger.Instance.tapHapticStrength / 2f, GorillaTagger.Instance.tapHapticDuration);
-                switch(BtnType)
+                switch (BtnType)
                 {
-                    case "Left Btn":
+                    case ButtonType.Left:
                         DimensionManager.Instance.SwitchPage(-1);
                         break;
-                    case "Right Btn":
+                    case ButtonType.Right:
                         DimensionManager.Instance.SwitchPage(1);
+                        break;
+                    case ButtonType.Load:
+                        DimensionManager.Instance.LoadSelectedDimension(DimensionManager.Instance.dimensionNames[DimensionManager.Instance.currentPage]);
                         break;
                 }
             }
