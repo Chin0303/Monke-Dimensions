@@ -17,10 +17,6 @@ namespace Monke_Dimensions.Patches
         private static float _teleportRotation;
         private static bool _killVelocity;
 
-        void Update()
-        {
-
-        }
         internal static bool Prefix(Player __instance, ref Vector3 ___lastPosition, ref Vector3[] ___velocityHistory, ref Vector3 ___lastHeadPosition, ref Vector3 ___lastLeftHandPosition, ref Vector3 ___lastRightHandPosition, ref Vector3 ___currentVelocity, ref Vector3 ___denormalizedVelocityAverage)
         {
             try

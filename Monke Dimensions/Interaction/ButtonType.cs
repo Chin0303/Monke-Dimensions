@@ -4,7 +4,6 @@
     {
         Load,
         Left,
-        Right,
-        Random
+        Right
     }
 }

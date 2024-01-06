@@ -16,7 +16,7 @@ namespace Monke_Dimensions.Behaviours
 
         public DimensionPackage package;
 
-        private GameObject loadedDimensionObj;
+        internal GameObject loadedDimensionObj;
 
         private Dictionary<string, DimensionPackage> dimensions = new Dictionary<string, DimensionPackage>();
         private Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
@@ -29,13 +29,12 @@ namespace Monke_Dimensions.Behaviours
 
         private bool inDimension;
 
-        private void Awake()
+        internal DimensionManager()
         {
             Instance = this;
             loadedDimensionObj = new GameObject("LoadedDimension");
             LoadDimensions();
         }
-
 
         public void LoadDimensions()
         {
@@ -78,7 +77,6 @@ namespace Monke_Dimensions.Behaviours
 
                     dimensions.Add(package.Name, package);
                     dimensionNames.Add(package.Name);
-                    //SwitchPage(1);
                 }
             }
         }
@@ -87,7 +85,7 @@ namespace Monke_Dimensions.Behaviours
         {
             if (loadedAssetBundles.TryGetValue(selectedDimension.Name, out AssetBundle cachedAssetBundle))
             {
-                InstantiateAssets(cachedAssetBundle);
+                InstantiateDimensions(cachedAssetBundle);
                 return;
             }
 
@@ -130,18 +128,19 @@ namespace Monke_Dimensions.Behaviours
 
             AssetBundle loadedAssetBundle = await tcs.Task;
 
-            InstantiateAssets(loadedAssetBundle);
+            InstantiateDimensions(loadedAssetBundle);
         }
 
-        private void InstantiateAssets(AssetBundle assetBundle)
+        private void InstantiateDimensions(AssetBundle assetBundle)
         {
             currentLoadedDimensionObjects = assetBundle.LoadAllAssets<GameObject>();
 
             foreach (GameObject loadedObject in currentLoadedDimensionObjects)
             {
-                GameObject instantiatedObject= Instantiate(loadedObject, loadedDimensionObj.transform);
+                GameObject instantiatedObject = Instantiate(loadedObject, loadedDimensionObj.transform);
                 AddGorillaSurfaceOverride(instantiatedObject);
             }
+            loadedDimensionObj.transform.position = new Vector3(0f, 0f, 600f);
             TeleportDimension.OnTeleport(currentPackage);
         }
         private void AddGorillaSurfaceOverride(GameObject obj)
@@ -160,6 +159,7 @@ namespace Monke_Dimensions.Behaviours
             {
                 TeleportDimension.ReturnToMonke();
                 UnloadCurrentDimension();
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky/").SetActive(true);
                 return;
             }
             if (dimensions.TryGetValue(dimensionName, out currentPackage))
@@ -169,6 +169,7 @@ namespace Monke_Dimensions.Behaviours
 
                 LoadAssets(dimensionFilePath, currentPackage);
                 inDimension = true;
+                GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky/").SetActive(false);
             }
             else
             {
@@ -184,6 +185,7 @@ namespace Monke_Dimensions.Behaviours
             }
             currentLoadedDimensionObjects = null;
             inDimension = false;
+            loadedDimensionObj.transform.position = new Vector3(0f, 0f, 0f);
         }
 
         public void SwitchPage(int direction)

@@ -21,9 +21,6 @@ namespace Monke_Dimensions.Interaction
                 case "Right Btn":
                     BtnType = ButtonType.Right;
                     break;
-                //case "Random Btn":
-                //   BtnType = ButtonType.Random;
-                //    break;
             }
             gameObject.layer = 18;
         }
