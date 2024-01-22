@@ -1,9 +1,8 @@
-﻿namespace Monke_Dimensions.Interaction
+﻿namespace Monke_Dimensions.Interaction;
+
+public enum ButtonType
 {
-    public enum ButtonType
-    {
-        Load,
-        Left,
-        Right
-    }
+    Load,
+    Left,
+    Right
 }
