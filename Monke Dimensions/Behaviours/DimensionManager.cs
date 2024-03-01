@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Monke_Dimensions.Behaviours.Addons;
 using System;
 using HarmonyLib;
+using BepInEx:
 
 namespace Monke_Dimensions.Behaviours;
 
@@ -56,7 +57,7 @@ internal class DimensionManager : MonoBehaviour
         Debug.Log("-> Found Dimension(s): <-");
 #endif
 
-        string path = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions");
+        string path = Path.Combine(BepInEx.Paths.PluginPath, "Monke.Dimensions\\Dimensions");
         var dimensionFiles = Directory.GetFiles(path, "*.dimension");
 
         dimensionNames = new List<string>();
