@@ -1,7 +1,7 @@
 <h1 align="center">Monke Dimensions</h1>
 <div align="center">
-  <a href="https://www.github.com/Chin0303/Monke-Dimensions/releases/latest/"><img src="https://img.shields.io/github/downloads/Chin0303/Monke-Dimensions/latest/total" alt="GitHub Downloads (all assets, latest release)"></img></a>
-  <a href="https://discord.gg/chin-s-server-1041450240135413890"><img src="https://img.shields.io/discord/1041450240135413890" alt="Discord"></img></a>
+  <a title="GitHub Downloads (all assets, latest release)" href="https://www.github.com/Chin0303/Monke-Dimensions/releases/latest/"><img src="https://img.shields.io/github/downloads/Chin0303/Monke-Dimensions/latest/total" alt="GitHub Downloads (all assets, latest release)"></img></a>
+  <a title="Discord" href="https://discord.gg/chin-s-server-1041450240135413890"><img src="https://img.shields.io/discord/1041450240135413890" alt="Discord"></img></a>
 </div>
 
 Monke Dimensions is a mod for [Gorilla Tag](https://www.gorillatagvr.com/) which lets you travel to custom, player-made maps ingame.
@@ -20,7 +20,8 @@ In order to add maps, you'll first want to download the maps you want. The easie
 ## Maps are stored as `(MAP NAME).dimension`, so if any map you download doesn't have that or a compression format such as `.zip`,</br>**DO NOT OPEN IT! IF YOU GOT IT FROM THE DISCORD, REPORT IT TO A MODERATOR OR SOMEONE HIGHER.**
 After downloading the maps you want, all you need to do is move them to the `Dimensions` folder located inside of `Monke.Dimensions`. (If you need a full-link, it's `(GTAG ROOT)\BepInEx\plugins\Monke.Dimensions\Dimensions\`.)
 
-# Making Maps</br>**(W.I.P, for now use [this video guide](https://youtu.be/Szc8s0gQzNI) until a proper guide is written.)**
+# Making Maps
+## **(W.I.P, for now use [this video guide](https://youtu.be/Szc8s0gQzNI) until a proper guide is written.)**
 
 # Legal Disclaimer
 This program falls under the [GNU General Public License v3.0](https://www.gnu.org/licenses/gpl-3.0.en.html).\
