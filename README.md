@@ -1,6 +1,6 @@
 # Monke Dimensions
-![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Chin0303/Monke-Dimensions/latest/total)
-![Discord](https://img.shields.io/discord/1041450240135413890)
+[![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/Chin0303/Monke-Dimensions/latest/total)](https://www.github.com/Chin0303/Monke-Dimensions/latest/)
+[![Discord](https://img.shields.io/discord/1041450240135413890)]()
 
 Monke Dimensions is a mod for Gorilla Tag which lets you travel to custom, player-made maps ingame.
 
