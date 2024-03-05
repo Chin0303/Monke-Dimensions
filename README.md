@@ -1,13 +1,13 @@
-# Monke Dimensions
+<h1 align="center">Monke Dimensions</h1>
 <div align="center">
   <a href="https://www.github.com/Chin0303/Monke-Dimensions/releases/latest/"><img src="https://img.shields.io/github/downloads/Chin0303/Monke-Dimensions/latest/total" alt="GitHub Downloads (all assets, latest release)"></img></a>
   <a href="https://discord.gg/chin-s-server-1041450240135413890"><img src="https://img.shields.io/discord/1041450240135413890" alt="Discord"></img></a>
 </div>
 
-Monke Dimensions is a mod for Gorilla Tag which lets you travel to custom, player-made maps ingame.
-
+Monke Dimensions is a mod for [Gorilla Tag](https://www.gorillatagvr.com/) which lets you travel to custom, player-made maps ingame.
 # Requirements
-If you're reading this, chances are you have Gorilla Tag on Steam/Rift but note that you'll also need to have [BepInEx](https://docs.bepinex.dev/index.html) installed with the game aswell. The easiest way to do that is with [Monke Mod Manager](https://github.com/BzzzThe18th/MonkeModManager/releases/latest). With BepInEx, you'll also need to install [Utilla](https://github.com/legoandmars/Utilla/releases/latest) aswell. You can also do this from Monke Mod Manager.
+## **This mod does NOT work on standalone/Meta Quest. Anyone claiming to have one that works with it is lying.**
+If you're reading this, chances are you have Gorilla Tag on [Steam](https://store.steampowered.com/) or [Oculus Rift](https://www.meta.com/experiences/pcvr/) but note that you'll also need to have [BepInEx](https://docs.bepinex.dev/index.html) installed with the game aswell. The easiest way to do that is with [Monke Mod Manager](https://github.com/BzzzThe18th/MonkeModManager/releases/latest). With BepInEx, you'll also need to install [Utilla](https://github.com/legoandmars/Utilla/releases/latest) aswell. You can also do this from Monke Mod Manager.
 
 # Installation
 First, download the [latest build](https://github.com/Chin0303/Monke-Dimensions/releases/latest) and extract it using the tool of your choice. ([7-Zip](https://www.7-zip.org/) is recommended.) Then extract the zip into `(GTAG ROOT)\BepInEx\plugins`. (`(GTAG ROOT)` is the folder that the Gorilla Tag executable is located. On Steam it is found in `C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\`, or alternatively you can right-click the game in your Steam library, and press `Browse local files` in `Manage`.)
