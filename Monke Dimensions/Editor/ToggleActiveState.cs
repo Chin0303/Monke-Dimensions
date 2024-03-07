@@ -1,19 +1,17 @@
 ﻿using Monke_Dimensions.Helpers;
-using System.Linq;
 using UnityEngine;
 
-namespace Monke_Dimensions.Behaviours.Addons;
+namespace Monke_Dimensions.Editor;
 
 public class ToggleActiveState : MonkeTriggerObject
 {
-    public  GameObject triggerObject;
+    public GameObject ObjectToToggle;
     private bool isOn;
 
     public override void MonkeTrigger(Collider collider)
     {
-
+        ObjectToToggle.SetActive(isOn);
         isOn = !isOn;
-        triggerObject.SetActive(isOn);
 
         base.MonkeTrigger(collider);
     }

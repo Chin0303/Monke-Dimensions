@@ -1,10 +1,14 @@
-﻿using BepInEx;
+﻿#if EDITOR
+
+#else
+using BepInEx;
+using GorillaLocomotion;
 using HarmonyLib;
+using Monke_Dimensions.API;
 using Monke_Dimensions.Behaviours;
 using Photon.Pun;
 using UnityEngine;
 using Utilla;
-using Utilla.Models;
 
 namespace Monke_Dimensions;
 
@@ -34,13 +38,12 @@ internal class Main : BaseUnityPlugin
             new GameObject("Dimension Teleport").AddComponent<TeleportDimension>().transform.SetParent(dimensionManager.gameObject.transform);
         };
 
-        Events.RoomJoined += (sender, e) =>
-        {
-            string gamemode = e.Gamemode;
-            bool inModded = gamemode.ToUpper().Contains("MODDED");
-            StandMD.SetActive(inModded);
-        };
         Events.RoomLeft += (sender, e) => StandMD.SetActive(false);
+
+        DimensionEvents.OnDimensionEnter += (dimension) =>
+        {
+            Debug.Log(dimension);
+        };
     }
 
     [ModdedGamemodeJoin]
@@ -48,3 +51,17 @@ internal class Main : BaseUnityPlugin
     [ModdedGamemodeLeave]
     private void OnLeave() => StandMD.SetActive(false);
 }
+
+public static class RigClampPatch
+{
+    [HarmonyPatch(typeof(VRRig), "SanitizeVector3"), HarmonyPostfix]
+    private static void SanitizeVector3_Postfix(Vector3 vec, ref Vector3 __result)
+    {
+        if (__result != Vector3.zero)
+        {
+            __result = Vector3.ClampMagnitude(vec, 100000f);
+        }
+    }
+}
+
+#endif

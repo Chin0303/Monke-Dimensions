@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if EDITOR
+
+#else
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Monke_Dimensions.Models;
@@ -26,7 +29,6 @@ internal class DimensionPackage
         {
             SlipperyObjects = new List<string>(),
             ExtraTerminals = new List<string>(),
-            TriggerEvents = new List<TriggerEvents>()
         };
     }
 
@@ -34,18 +36,6 @@ internal class DimensionPackage
     {
         public List<string> SlipperyObjects { get; set; }
         public List<string> ExtraTerminals { get; set; }
-        public List<TriggerEvents> TriggerEvents { get; set; }
-    }
-
-    public class TriggerEvents
-    {
-        public string EventType { get; set; }
-        public List<TriggerComponent> TriggerEvent { get; set; }
-    }
-
-    public class TriggerComponent
-    {
-        public string TriggerObjectName { get; set; }
-        public string TriggerEventObjectName { get; set; }
     }
 }
+#endif

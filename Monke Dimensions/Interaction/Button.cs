@@ -1,4 +1,7 @@
-﻿using Monke_Dimensions.Behaviours;
+﻿#if EDITOR
+
+#else
+using Monke_Dimensions.Behaviours;
 using UnityEngine;
 
 namespace Monke_Dimensions.Interaction;
@@ -47,3 +50,4 @@ internal class Button : MonoBehaviour
         }
     }
 }
+#endif

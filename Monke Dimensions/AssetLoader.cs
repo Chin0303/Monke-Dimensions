@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿#if EDITOR
+
+#else
+using System.IO;
 using System.Reflection;
 using UnityEngine;
 
@@ -17,3 +20,4 @@ internal class AssetLoader : MonoBehaviour
         assetBundle.Unload(false);
     }
 }
+#endif

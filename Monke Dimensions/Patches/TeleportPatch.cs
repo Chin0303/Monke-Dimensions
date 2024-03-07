@@ -1,5 +1,6 @@
-﻿// stolen from kyle who stole it from graic
+﻿#if EDITOR
 
+#else
 using GorillaLocomotion;
 using HarmonyLib;
 using System.Reflection;
@@ -69,3 +70,4 @@ internal class TeleportPatch
         _rotate = true;
     }
 }
+#endif

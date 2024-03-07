@@ -1,4 +1,7 @@
-﻿using Monke_Dimensions.Behaviours;
+﻿#if EDITOR
+
+#else
+using Monke_Dimensions.Behaviours;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
@@ -27,16 +30,5 @@ public static class AddonExtensions
 
         return closestTerminalPoint;
     }
-
-    public static string GetTriggerEvent(TriggerEvents triggerEvent)
-    {
-        foreach (var triggerevent in DimensionManager.Instance.currentPackage.Addons.TriggerEvents.Where(e => e.EventType == triggerEvent.ToString()))
-        {
-            foreach (var triggerComponent in triggerevent.TriggerEvent)
-            {
-                return triggerComponent.TriggerEventObjectName;
-            }
-        }
-        return null;
-    }
 }
+#endif

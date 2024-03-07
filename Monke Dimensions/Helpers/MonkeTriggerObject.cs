@@ -6,7 +6,9 @@ public class MonkeTriggerObject : MonoBehaviour
 {
     private bool isTriggering = false;
     public string TriggerObjectName { get; set; }
+#if EDITOR
 
+#else
     private void Start() => gameObject.layer = 18;
     private void OnTriggerEnter(Collider collider)
     {
@@ -19,9 +21,10 @@ public class MonkeTriggerObject : MonoBehaviour
             isTriggering = false;
         }
     }
-
+#endif
     public virtual void MonkeTrigger(Collider collider)
     {
         Debug.Log("Triggered: " + collider.gameObject.name);
     }
+
 }

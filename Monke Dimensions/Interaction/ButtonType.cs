@@ -1,4 +1,7 @@
-﻿namespace Monke_Dimensions.Interaction;
+﻿#if EDITOR
+
+#else
+namespace Monke_Dimensions.Interaction;
 
 public enum ButtonType
 {
@@ -6,3 +9,4 @@ public enum ButtonType
     Left,
     Right
 }
+#endif

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if EDITOR
+
+#else
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -9,6 +12,7 @@ using System.Threading.Tasks;
 using Monke_Dimensions.Behaviours.Addons;
 using System;
 using HarmonyLib;
+using UnityEngine.SceneManagement;
 
 namespace Monke_Dimensions.Behaviours;
 
@@ -27,7 +31,7 @@ internal class DimensionManager : MonoBehaviour
     private Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
     public Dictionary<string, string> teleportMapping = new Dictionary<string, string>();
 
-    private GameObject[] currentLoadedDimensionObjects;
+    public GameObject[] currentLoadedDimensionObjects;
 
     public int currentPage = 1;
     private const int slipperyIndexNumber = 59;
@@ -161,7 +165,7 @@ internal class DimensionManager : MonoBehaviour
         GameObject.Find(currentLoadedDimensionObjects.First().gameObject.name + "(Clone)").transform.position = new Vector3(0f, 0, 0f);
 
         loadedDimensionObj.transform.position = new Vector3(0f, 650f, 0f);
-        Camera.main.farClipPlane += 750f;
+        Camera.main.farClipPlane += 25000;
         TeleportDimension.OnTeleport(currentPackage);
     }
 
@@ -190,24 +194,6 @@ internal class DimensionManager : MonoBehaviour
         }
         extraTerminalNames = extraTerminals.Select(go => go.name).ToList();
 
-        foreach (var triggerEvent in currentPackage.Addons.TriggerEvents)
-        {
-            if (triggerEvent.EventType == "TeleportPlayer")
-            {
-                foreach (var triggerComponent in triggerEvent.TriggerEvent)
-                {
-                    if (obj.name.Contains(triggerComponent.TriggerObjectName)) obj.AddComponent<RespawnPlayer>();
-                }
-            }
-            else if (triggerEvent.EventType == "ToggleActiveState")
-            {
-                foreach (var triggerComponent in triggerEvent.TriggerEvent)
-                {
-                    if (obj.name.Contains(triggerComponent.TriggerObjectName)) obj.AddComponent<ToggleActiveState>();
-                }
-            }
-        }
-
         if (obj.transform.childCount > 0)
         {
             foreach (Transform child in obj.transform)
@@ -234,7 +220,11 @@ internal class DimensionManager : MonoBehaviour
             return;
         }
 
-        string dimensionFilePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{dimensionName}.dimension");
+        string dimensionFilePath = Path.Combine(BepInEx.Paths.PluginPath, "Dimensions", $"{dimensionName}.dimension");
+        if (!File.Exists(dimensionFilePath))
+        {
+            dimensionFilePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{dimensionName}.dimension");
+        }
 
         LoadAssets(dimensionFilePath, currentPackage.Name);
         inDimension = true;
@@ -251,7 +241,7 @@ internal class DimensionManager : MonoBehaviour
         currentLoadedDimensionObjects = null;
         inDimension = false;
         loadedDimensionObj.transform.position = new Vector3(0f, 0f, 0f);
-        Camera.main.farClipPlane -= 750f;
+        Camera.main.farClipPlane -= 25000f;
     }
 
     public void SwitchPage(int direction)
@@ -316,3 +306,4 @@ internal class DimensionManager : MonoBehaviour
     }
 #endif
 }
+#endif

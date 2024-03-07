@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿#if EDITOR
+
+#else
+using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -35,3 +39,4 @@ internal class Comps : MonoBehaviour
         LeftBtn = GameObject.Find("Buttons/Left Btn");
     }
 }
+#endif
