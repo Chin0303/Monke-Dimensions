@@ -2,7 +2,7 @@
 
 ## Installation
 First, download the [latest build](https://github.com/Chin0303/Monke-Dimensions/releases/latest) and extract/unzip it.\
- Then navigate to your Plugins folder and drag it into there. If you play on Steam its most likely located [here](./Marketing/SteamPluginsFolder.html) and if you play on Oculus its most likely located [here](./Marketing/OculusPluginsFolder.html). 
+ Then navigate to your Plugins folder and drag it into there. If you play on Steam its most likely located at ```C:\Program Files (x86)\Steam\steamapps\common\Gorilla Tag\BepInEx\plugins``` and if you play on Oculus its most likely located at ```C:\Program Files\Oculus\Software\Software\another-axiom-gorilla-tag\BepInEx\plugins```. 
 
 Make sure that both the `Monke Dimensions.dll` and `Dimensions` folder are both in `(GTAG ROOT)\BepInEx\plugins\Monke.Dimensions\`. If you need to, you can create the `Monke.Dimensions` folder and move the files into that.\
 If all went according to plan, the mod should now be setup and ready to use!
