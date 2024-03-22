@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body onload="openSteamPlugins()">
+    <script>
+        function openSteamPlugins() {
+            var path = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Gorilla Tag\\BepInEx\\plugins";
+            window.location.href = 'file:///' + path.replace(/\\/g, '/');
+        }
+    </script>
+</body>
+</html>

@@ -2,11 +2,9 @@
 
 #else
 using BepInEx;
-using GorillaLocomotion;
 using HarmonyLib;
 using Monke_Dimensions.API;
 using Monke_Dimensions.Behaviours;
-using Photon.Pun;
 using UnityEngine;
 using Utilla;
 
@@ -22,7 +20,7 @@ internal class Main : BaseUnityPlugin
     internal const string
         GUID = "chin.monkedimensions",
         NAME = "Monke Dimensions",
-        VERSION = "1.0.1";
+        VERSION = "1.2.0";
 
     internal Main()
     {
@@ -39,11 +37,6 @@ internal class Main : BaseUnityPlugin
         };
 
         Events.RoomLeft += (sender, e) => StandMD.SetActive(false);
-
-        DimensionEvents.OnDimensionEnter += (dimension) =>
-        {
-            Debug.Log(dimension);
-        };
     }
 
     [ModdedGamemodeJoin]

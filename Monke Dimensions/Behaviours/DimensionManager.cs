@@ -9,10 +9,8 @@ using UnityEngine;
 using Monke_Dimensions.Interaction;
 using Monke_Dimensions.Models;
 using System.Threading.Tasks;
-using Monke_Dimensions.Behaviours.Addons;
-using System;
 using HarmonyLib;
-using UnityEngine.SceneManagement;
+using Monke_Dimensions.Editor;
 
 namespace Monke_Dimensions.Behaviours;
 
@@ -21,26 +19,21 @@ internal class DimensionManager : MonoBehaviour
     public static DimensionManager Instance { get; private set; }
 
     public DimensionPackage currentPackage;
-    public DimensionPackage selectedPackage;
-
     public DimensionPackage package;
 
     internal GameObject loadedDimensionObj;
 
     private Dictionary<string, DimensionPackage> dimensions = new Dictionary<string, DimensionPackage>();
     private Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
-    public Dictionary<string, string> teleportMapping = new Dictionary<string, string>();
 
     public GameObject[] currentLoadedDimensionObjects;
 
     public int currentPage = 1;
-    private const int slipperyIndexNumber = 59;
     public List<string> dimensionNames;
 
     public bool inDimension;
 
     public List<GameObject> extraTerminals = new List<GameObject>();
-    public List<string> extraTerminalNames;
 
 
     internal DimensionManager()
@@ -167,6 +160,7 @@ internal class DimensionManager : MonoBehaviour
         loadedDimensionObj.transform.position = new Vector3(0f, 650f, 0f);
         Camera.main.farClipPlane += 25000;
         TeleportDimension.OnTeleport(currentPackage);
+        extraTerminals.Add(GameObject.Find(currentPackage.TerminalPoint));
     }
 
     private void SetupSurface(GameObject obj)
@@ -174,25 +168,7 @@ internal class DimensionManager : MonoBehaviour
         if (obj.GetComponent<GorillaSurfaceOverride>() == null) obj.AddComponent<GorillaSurfaceOverride>();
 
         if (obj.GetComponent<Animation>() != null && obj.GetComponent<MovingPlatform>() == null) obj.AddComponent<MovingPlatform>();
-
-        foreach (string slipperyObjectName in currentPackage.Addons.SlipperyObjects)
-        {
-            if (obj.name == slipperyObjectName)
-            {
-                obj.GetComponent<GorillaSurfaceOverride>().overrideIndex = slipperyIndexNumber;
-            }
-        }
-
-        extraTerminalNames = new List<string>(currentPackage.Addons.ExtraTerminals)
-        {
-            currentPackage.TerminalPoint
-        };
-
-        foreach (string extraTerminalName in extraTerminalNames.ToList())
-        {
-            if (obj.name.Contains(extraTerminalName)) extraTerminals.Add(obj);
-        }
-        extraTerminalNames = extraTerminals.Select(go => go.name).ToList();
+        if (obj.GetComponent<ExtraTerminal> != null) extraTerminals.Add(obj);
 
         if (obj.transform.childCount > 0)
         {
@@ -216,7 +192,6 @@ internal class DimensionManager : MonoBehaviour
             FindZoneData(GTZone.forest).rootGameObjects[1].SetActive(inDimension);
 
             extraTerminals.Clear();
-            extraTerminalNames.Clear();
             return;
         }
 
