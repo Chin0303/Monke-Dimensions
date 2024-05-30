@@ -1,10 +1,15 @@
-﻿using BepInEx;
+﻿#if EDITOR
+
+#else
+using BepInEx;
 using HarmonyLib;
+using Monke_Dimensions.API;
 using Monke_Dimensions.Behaviours;
-using Photon.Pun;
 using UnityEngine;
 using Utilla;
-using Utilla.Models;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace Monke_Dimensions;
 
@@ -13,34 +18,45 @@ namespace Monke_Dimensions;
 [ModdedGamemode]
 internal class Main : BaseUnityPlugin
 {
+    public static AssetBundle assetBundle;
     internal static GameObject StandMD;
 
     internal const string
         GUID = "chin.monkedimensions",
         NAME = "Monke Dimensions",
-        VERSION = "1.0.1";
+        VERSION = "1.2.0";
 
     internal Main()
     {
         new Harmony(GUID).PatchAll(typeof(Main).Assembly);
         Utilla.Events.GameInitialized += (sender, e) =>
         {
-            AssetLoader.LoadAssets("Monke_Dimensions.Resources.stand");
+            assetBundle = LoadAssetBundle("Monke_Dimensions.Resources.stand");
 
+            Instantiate(assetBundle.LoadAsset<GameObject>("StandMD"));
+            GameObject.Find("StandMD(Clone)/RealStand").AddComponent<GorillaSurfaceOverride>();
             Comps.SetupComps();
 
             var dimensionManager = new GameObject("Dimension Manager").AddComponent<DimensionManager>();
             StandMD = GameObject.Find("StandMD(Clone)");
             new GameObject("Dimension Teleport").AddComponent<TeleportDimension>().transform.SetParent(dimensionManager.gameObject.transform);
+
+            Comps.Confetti = assetBundle.LoadAsset<GameObject>("Confetti");
         };
 
-        Events.RoomJoined += (sender, e) =>
-        {
-            string gamemode = e.Gamemode;
-            bool inModded = gamemode.ToUpper().Contains("MODDED");
-            StandMD.SetActive(inModded);
-        };
         Events.RoomLeft += (sender, e) => StandMD.SetActive(false);
+
+        Action<string> value = Debug.Log;
+        DimensionEvents.OnDimensionEnter += value;
+        DimensionEvents.OnDimensionLeave += value;
+    }
+
+    public AssetBundle LoadAssetBundle(string path)
+    {
+        Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+        AssetBundle bundle = AssetBundle.LoadFromStream(stream);
+        stream.Close();
+        return bundle;
     }
 
     [ModdedGamemodeJoin]
@@ -48,3 +64,5 @@ internal class Main : BaseUnityPlugin
     [ModdedGamemodeLeave]
     private void OnLeave() => StandMD.SetActive(false);
 }
+
+#endif

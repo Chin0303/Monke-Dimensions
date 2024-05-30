@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿#if EDITOR
+
+#else
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -6,9 +9,9 @@ using UnityEngine;
 using Monke_Dimensions.Interaction;
 using Monke_Dimensions.Models;
 using System.Threading.Tasks;
-using Monke_Dimensions.Behaviours.Addons;
-using System;
 using HarmonyLib;
+using Monke_Dimensions.Editor;
+using Monke_Dimensions.Browser;
 
 namespace Monke_Dimensions.Behaviours;
 
@@ -16,42 +19,35 @@ internal class DimensionManager : MonoBehaviour
 {
     public static DimensionManager Instance { get; private set; }
 
-    public DimensionPackage currentPackage;
-    public DimensionPackage selectedPackage;
-
-    public DimensionPackage package;
+    public DimensionPackage currentViewingPackage;
+    public DimensionPackage currentDimensionPackage;
 
     internal GameObject loadedDimensionObj;
 
     private Dictionary<string, DimensionPackage> dimensions = new Dictionary<string, DimensionPackage>();
     private Dictionary<string, AssetBundle> loadedAssetBundles = new Dictionary<string, AssetBundle>();
-    public Dictionary<string, string> teleportMapping = new Dictionary<string, string>();
 
-    private GameObject[] currentLoadedDimensionObjects;
+    public GameObject[] currentLoadedDimensionObjects;
 
     public int currentPage = 1;
-    private const int slipperyIndexNumber = 59;
     public List<string> dimensionNames;
 
     public bool inDimension;
 
-    public List<GameObject> extraTerminals = new List<GameObject>();
-    public List<string> extraTerminalNames;
-
+    public GameObject Garfield;
 
     internal DimensionManager()
     {
         Instance = this;
         loadedDimensionObj = new GameObject("LoadedDimension");
+        ButtonSetup();
         LoadDimensions();
     }
 
     public void LoadDimensions()
     {
-        Comps.LeftBtn.AddComponent<Button>();
-        Comps.RightBtn.AddComponent<Button>();
-        Comps.LoadBtn.AddComponent<Button>();
-
+        Garfield = GameObject.Find("Garfield");
+        Garfield.SetActive(false);
 #if DEBUG
         Debug.Log("-> Found Dimension(s): <-");
 #endif
@@ -70,6 +66,14 @@ internal class DimensionManager : MonoBehaviour
         }
     }
 
+    private void ButtonSetup()
+    {
+        Comps.LeftBtn.AddComponent<Button>().BtnType = ButtonType.Left;
+        Comps.RightBtn.AddComponent<Button>().BtnType = ButtonType.Right;
+        Comps.LoadBtn.AddComponent<Button>().BtnType = ButtonType.Load;
+        Comps.BrowserButton.AddComponent<Button>().BtnType = ButtonType.Browser;
+        Comps.GarfieldButton.AddComponent<Button>().BtnType = ButtonType.Garfield;
+    }
 
     private void LoadDimension(string dimensionFile)
     {
@@ -87,12 +91,10 @@ internal class DimensionManager : MonoBehaviour
 
             using (StreamReader packageReader = new StreamReader(packageEntry.Open()))
             {
-                package = Newtonsoft.Json.JsonConvert.DeserializeObject<DimensionPackage>(packageReader.ReadToEnd());
+                DimensionPackage package = Newtonsoft.Json.JsonConvert.DeserializeObject<DimensionPackage>(packageReader.ReadToEnd());
                 string jsonContent = packageReader.ReadToEnd();
 
-#if DEBUG
-                Debug.Log($"-> Name: {package.Name}, Author: {package.Author}, Spawnpoint Name: {package.SpawnPoint}, Terminal Name: {package.TerminalPoint} <-");
-#endif
+                Debug.Log($"[Monke Dimensions Map] -> Name: {package.Name}, Author: {package.Author}");
                 dimensions.Add(dimensionFile, package);
             }
 
@@ -158,11 +160,12 @@ internal class DimensionManager : MonoBehaviour
             GameObject instantiatedObject = Instantiate(loadedObject, loadedDimensionObj.transform);
             SetupSurface(instantiatedObject);
         }
+
         GameObject.Find(currentLoadedDimensionObjects.First().gameObject.name + "(Clone)").transform.position = new Vector3(0f, 0, 0f);
 
         loadedDimensionObj.transform.position = new Vector3(0f, 650f, 0f);
-        Camera.main.farClipPlane += 750f;
-        TeleportDimension.OnTeleport(currentPackage);
+        Camera.main.farClipPlane += 25000;
+        TeleportDimension.OnTeleport(currentDimensionPackage);
     }
 
     private void SetupSurface(GameObject obj)
@@ -170,43 +173,6 @@ internal class DimensionManager : MonoBehaviour
         if (obj.GetComponent<GorillaSurfaceOverride>() == null) obj.AddComponent<GorillaSurfaceOverride>();
 
         if (obj.GetComponent<Animation>() != null && obj.GetComponent<MovingPlatform>() == null) obj.AddComponent<MovingPlatform>();
-
-        foreach (string slipperyObjectName in currentPackage.Addons.SlipperyObjects)
-        {
-            if (obj.name == slipperyObjectName)
-            {
-                obj.GetComponent<GorillaSurfaceOverride>().overrideIndex = slipperyIndexNumber;
-            }
-        }
-
-        extraTerminalNames = new List<string>(currentPackage.Addons.ExtraTerminals)
-        {
-            currentPackage.TerminalPoint
-        };
-
-        foreach (string extraTerminalName in extraTerminalNames.ToList())
-        {
-            if (obj.name.Contains(extraTerminalName)) extraTerminals.Add(obj);
-        }
-        extraTerminalNames = extraTerminals.Select(go => go.name).ToList();
-
-        foreach (var triggerEvent in currentPackage.Addons.TriggerEvents)
-        {
-            if (triggerEvent.EventType == "TeleportPlayer")
-            {
-                foreach (var triggerComponent in triggerEvent.TriggerEvent)
-                {
-                    if (obj.name.Contains(triggerComponent.TriggerObjectName)) obj.AddComponent<RespawnPlayer>();
-                }
-            }
-            else if (triggerEvent.EventType == "ToggleActiveState")
-            {
-                foreach (var triggerComponent in triggerEvent.TriggerEvent)
-                {
-                    if (obj.name.Contains(triggerComponent.TriggerObjectName)) obj.AddComponent<ToggleActiveState>();
-                }
-            }
-        }
 
         if (obj.transform.childCount > 0)
         {
@@ -223,23 +189,29 @@ internal class DimensionManager : MonoBehaviour
         ZoneData FindZoneData(GTZone zone) => (ZoneData)AccessTools.Method(typeof(ZoneManagement), "GetZoneData").Invoke(zoneManager, new object[] { zone });
         if (inDimension)
         {
-            TeleportDimension.ReturnToMonke();
-            UnloadCurrentDimension();
             foreach (GameObject EnviormentObject in Comps.EnviormentObjects) EnviormentObject.SetActive(inDimension);
 
             FindZoneData(GTZone.forest).rootGameObjects[1].SetActive(inDimension);
+            TeleportDimension.ReturnToMonke(currentDimensionPackage);
+            UnloadCurrentDimension();
 
-            extraTerminals.Clear();
-            extraTerminalNames.Clear();
             return;
         }
+        else
+        {
 
-        string dimensionFilePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{dimensionName}.dimension");
+            string dimensionFilePath = Path.Combine(BepInEx.Paths.PluginPath, "Dimensions", $"{dimensionName}.dimension");
+            if (!File.Exists(dimensionFilePath))
+            {
+                dimensionFilePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{dimensionName}.dimension");
+            }
 
-        LoadAssets(dimensionFilePath, currentPackage.Name);
-        inDimension = true;
-        foreach (GameObject EnviormentObject in Comps.EnviormentObjects) EnviormentObject.SetActive(false);
-        FindZoneData(GTZone.forest).rootGameObjects[1].SetActive(false);
+            currentDimensionPackage = currentViewingPackage;
+            LoadAssets(dimensionFilePath, currentDimensionPackage.Name);
+            inDimension = true;
+            foreach (GameObject EnviormentObject in Comps.EnviormentObjects) EnviormentObject.SetActive(false);
+            FindZoneData(GTZone.forest).rootGameObjects[1].SetActive(false);
+        }
     }
 
     public void UnloadCurrentDimension()
@@ -251,7 +223,7 @@ internal class DimensionManager : MonoBehaviour
         currentLoadedDimensionObjects = null;
         inDimension = false;
         loadedDimensionObj.transform.position = new Vector3(0f, 0f, 0f);
-        Camera.main.farClipPlane -= 750f;
+        Camera.main.farClipPlane -= 25000f;
     }
 
     public void SwitchPage(int direction)
@@ -268,7 +240,23 @@ internal class DimensionManager : MonoBehaviour
             Comps.NameText.text = $"DIMENSION: {selectedDimension.Name}".ToUpper();
             Comps.DescriptionText.text = selectedDimension.Description.ToUpper();
             Comps.StatusText.text = $"DIMENSIONS FOUND: ({currentPage + 1} / {totalPages})";
-            currentPackage = selectedDimension;
+            currentViewingPackage = selectedDimension;
+        }
+    }
+
+    public void LoadDownloadedDimension()
+    {
+        string path = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions");
+        var dimensionFiles = Directory.GetFiles(path, "*.dimension");
+
+        foreach (string dimensionFile in dimensionFiles)
+        {
+            if (!dimensions.ContainsKey(dimensionFile))
+            {
+                string dimensionName = Path.GetFileNameWithoutExtension(dimensionFile);
+                dimensionNames.Add(dimensionName);
+                LoadDimension(dimensionFile);
+            }
         }
     }
 
@@ -311,8 +299,32 @@ internal class DimensionManager : MonoBehaviour
         {
             LoadSelectedDimension(dimensionNames[currentPage]);
         }
+        GUILayout.Space(20);
+
+        if (GUILayout.Button("Join Crafterbot"))
+        {
+            Utilla.Utils.RoomUtils.JoinPrivateLobby("CRAFTERBOT");
+        }
+        GUILayout.Space(30);
+        GUILayout.Label("Browser Stuff");
+        GUILayout.Space(10);
+
+        if (GUILayout.Button("Open Browser"))
+        {
+            DimensionBrowser.inBrowser = true;
+            DimensionBrowser.instance.OnBrowserEnabled();
+        }
+        if (GUILayout.Button("Next Page"))
+        {
+            DimensionBrowser.instance.NextPage();
+        }
+        if (GUILayout.Button("Previous Page"))
+        {
+            DimensionBrowser.instance.PreviousPage();
+        }
 
         GUILayout.EndArea();
     }
 #endif
 }
+#endif

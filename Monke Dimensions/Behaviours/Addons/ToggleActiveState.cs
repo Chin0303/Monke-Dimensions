@@ -4,16 +4,13 @@ using UnityEngine;
 
 namespace Monke_Dimensions.Behaviours.Addons;
 
-internal class ToggleActiveState : MonkeTriggerObject
+public class ToggleActiveState : MonkeTriggerObject
 {
-    private GameObject triggerObject;
+    public  GameObject triggerObject;
     private bool isOn;
 
     public override void MonkeTrigger(Collider collider)
     {
-        string triggerObjectName = AddonExtensions.GetTriggerEvent(TriggerEvents.ToggleActiveState);
-
-        if (triggerObject == null) triggerObject = GameObject.Find(triggerObjectName);
 
         isOn = !isOn;
         triggerObject.SetActive(isOn);

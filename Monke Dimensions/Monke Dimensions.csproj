@@ -9,16 +9,15 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Monke_Dimensions</RootNamespace>
     <AssemblyName>Monke Dimensions</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin/Debug</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,10 +25,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>bin/Release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Editor|AnyCPU'">
+    <OutputPath>bin\Editor\</OutputPath>
+    <DefineConstants>EDITOR</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -392,21 +395,27 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\DimensionEvents.cs" />
+    <Compile Include="API\DimensionTools.cs" />
     <Compile Include="AssetLoader.cs" />
-    <Compile Include="Behaviours\Addons\ToggleActiveState.cs" />
+    <Compile Include="Browser\DimensionBrowser.cs" />
+    <Compile Include="Browser\Item.cs" />
+    <Compile Include="Editor\CustomSurface.cs" />
+    <Compile Include="Editor\ToggleActiveState.cs" />
     <Compile Include="Helpers\AddonExtensions.cs" />
     <Compile Include="Helpers\MonkeTriggerObject.cs" />
-    <Compile Include="Behaviours\Addons\RespawnPlayer.cs" />
     <Compile Include="Behaviours\Comps.cs" />
     <Compile Include="Behaviours\DimensionManager.cs" />
     <Compile Include="Behaviours\TeleportDimension.cs" />
     <Compile Include="Interaction\ButtonType.cs" />
     <Compile Include="Interaction\Button.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="Models\DimensionDescriptor.cs" />
     <Compile Include="Models\DimensionPackage.cs" />
     <Compile Include="Patches\TeleportPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TriggerEvents.cs" />
+    <Compile Include="Editor\TeleportPlayer.cs" />
+    <Compile Include="TriggerEvent.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

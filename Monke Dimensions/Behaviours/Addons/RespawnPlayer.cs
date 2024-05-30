@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using Monke_Dimensions.Helpers;
+using Monke_Dimensions.Patches;
 
 namespace Monke_Dimensions.Behaviours.Addons;
 
-internal class RespawnPlayer : MonkeTriggerObject
+public class RespawnPlayer : MonkeTriggerObject
 {
     public override void MonkeTrigger(Collider collider)
     {
-        TeleportDimension.OnTeleport(DimensionManager.Instance.currentPackage, true);
+
+        TeleportPatch.TeleportPlayer(tpGO.transform.position, 180f, false);
 
         base.MonkeTrigger(collider);
     }

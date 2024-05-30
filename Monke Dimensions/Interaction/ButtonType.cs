@@ -1,8 +1,14 @@
-﻿namespace Monke_Dimensions.Interaction;
+﻿#if EDITOR
+
+#else
+namespace Monke_Dimensions.Interaction;
 
 public enum ButtonType
 {
     Load,
     Left,
-    Right
+    Right,
+    Browser,
+    Garfield
 }
+#endif

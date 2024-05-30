@@ -4,24 +4,30 @@ namespace Monke_Dimensions.Helpers;
 
 public class MonkeTriggerObject : MonoBehaviour
 {
-    private bool isTriggering = false;
-    public string TriggerObjectName { get; set; }
+#if EDITOR
 
-    private void Start() => gameObject.layer = 18;
+#else
+    private void Start() => 
+        gameObject.layer = 18;
+
     private void OnTriggerEnter(Collider collider)
     {
-        if (isTriggering) return;
-
         if (collider.name == GorillaTagger.Instance.bodyCollider.name || collider.GetComponentInParent<GorillaTriggerColliderHandIndicator>() != null)
         {
-            isTriggering = true;
             MonkeTrigger(collider);
-            isTriggering = false;
         }
     }
-
+#endif
     public virtual void MonkeTrigger(Collider collider)
     {
+#if EDITOR
+#else
+        var hand = collider.GetComponentInParent<GorillaTriggerColliderHandIndicator>();
+        GorillaTagger.Instance.offlineVRRig.PlayHandTapLocal(211, hand.isLeftHand, 0.12f);
+        GorillaTagger.Instance.StartVibration(hand.isLeftHand, GorillaTagger.Instance.tapHapticStrength / 2f, GorillaTagger.Instance.tapHapticDuration);
+
         Debug.Log("Triggered: " + collider.gameObject.name);
+#endif
+
     }
 }
