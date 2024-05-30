@@ -45,14 +45,15 @@ DimensionEvents.OnDimensionLeave += (dimension) =>
 
 ### Trigger Events
 ```csharp
-DimensionEvents.OnDimensionTriggerEvent += (triggerevent, gameobj, ison) =>
+DimensionEvents.OnDimensionTriggerEvent += 
+(triggerevent, triggerGameobject, triggeredGameObject, ison) =>
 {
-    if(triggerevent == TriggerEvent.ToggleActiveState && ison)
+    if(triggerevent == TriggerEvent.ToggleActiveState)
     {
         /* Get the renderer component of the trigger object */
-        var matRenderer = gameobj.GetComponent<Renderer>();
+        var matRenderer = triggerGameobject.GetComponent<Renderer>();
         
-        /* If the "isOn" boolean is true, then apply A green color onto it, if not apply A red color onto it. */
+        /* If the "isOn" boolean is true, then apply A green color onto the Trigger Object (NOT the object that is getting triggered by the trigger object), if not apply A red color onto it. */
         matRenderer.material.color = ison ? Color.green : Color.red;
     }
 };

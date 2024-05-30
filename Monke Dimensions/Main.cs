@@ -7,6 +7,9 @@ using Monke_Dimensions.API;
 using Monke_Dimensions.Behaviours;
 using UnityEngine;
 using Utilla;
+using System;
+using System.IO;
+using System.Reflection;
 
 namespace Monke_Dimensions;
 
@@ -15,6 +18,7 @@ namespace Monke_Dimensions;
 [ModdedGamemode]
 internal class Main : BaseUnityPlugin
 {
+    public static AssetBundle assetBundle;
     internal static GameObject StandMD;
 
     internal const string
@@ -27,34 +31,38 @@ internal class Main : BaseUnityPlugin
         new Harmony(GUID).PatchAll(typeof(Main).Assembly);
         Utilla.Events.GameInitialized += (sender, e) =>
         {
-            AssetLoader.LoadAssets("Monke_Dimensions.Resources.stand");
+            assetBundle = LoadAssetBundle("Monke_Dimensions.Resources.stand");
 
+            Instantiate(assetBundle.LoadAsset<GameObject>("StandMD"));
+            GameObject.Find("StandMD(Clone)/RealStand").AddComponent<GorillaSurfaceOverride>();
             Comps.SetupComps();
 
             var dimensionManager = new GameObject("Dimension Manager").AddComponent<DimensionManager>();
             StandMD = GameObject.Find("StandMD(Clone)");
             new GameObject("Dimension Teleport").AddComponent<TeleportDimension>().transform.SetParent(dimensionManager.gameObject.transform);
+
+            Comps.Confetti = assetBundle.LoadAsset<GameObject>("Confetti");
         };
 
         Events.RoomLeft += (sender, e) => StandMD.SetActive(false);
+
+        Action<string> value = Debug.Log;
+        DimensionEvents.OnDimensionEnter += value;
+        DimensionEvents.OnDimensionLeave += value;
+    }
+
+    public AssetBundle LoadAssetBundle(string path)
+    {
+        Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+        AssetBundle bundle = AssetBundle.LoadFromStream(stream);
+        stream.Close();
+        return bundle;
     }
 
     [ModdedGamemodeJoin]
     private void OnJoin() => StandMD.SetActive(true);
     [ModdedGamemodeLeave]
     private void OnLeave() => StandMD.SetActive(false);
-}
-
-public static class RigClampPatch
-{
-    [HarmonyPatch(typeof(VRRig), "SanitizeVector3"), HarmonyPostfix]
-    private static void SanitizeVector3_Postfix(Vector3 vec, ref Vector3 __result)
-    {
-        if (__result != Vector3.zero)
-        {
-            __result = Vector3.ClampMagnitude(vec, 100000f);
-        }
-    }
 }
 
 #endif

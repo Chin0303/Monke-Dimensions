@@ -19,8 +19,8 @@ public class TeleportPlayer : MonkeTriggerObject
 #if EDITOR
 
 #else
-        TeleportPatch.TeleportPlayer(TeleportDestination.transform.position, 180f, false);
-        DimensionEvents.OnDimensionTriggerEvent(TriggerEvent.Teleport, TeleportDestination, false);
+        TeleportPatch.TeleportPlayer(TeleportDestination.transform.position, 0f, true);
+        DimensionEvents.OnDimensionTriggerEvent(TriggerEvent.Teleport, this.gameObject, TeleportDestination, false);
 
         base.MonkeTrigger(collider);
 #endif

@@ -7,6 +7,8 @@ public enum ButtonType
 {
     Load,
     Left,
-    Right
+    Right,
+    Browser,
+    Garfield
 }
 #endif
