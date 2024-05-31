@@ -15,10 +15,11 @@ public class ToggleActiveState : MonkeTriggerObject
     public GameObject ObjectToToggle;
     private bool isOn, eventOnCooldown;
     private float lastEventTime;
-    private const float eventCooldown = 0.3f;
+    private const float eventCooldown = 0.15f;
 #if EDITOR
 
 #else
+    private void Start() => isOn = ObjectToToggle.activeSelf;
     public override void MonkeTrigger(Collider collider)
     {
         if (eventOnCooldown || Time.time - lastEventTime < eventCooldown)

@@ -42,6 +42,14 @@ internal class Main : BaseUnityPlugin
             new GameObject("Dimension Teleport").AddComponent<TeleportDimension>().transform.SetParent(dimensionManager.gameObject.transform);
 
             Comps.Confetti = assetBundle.LoadAsset<GameObject>("Confetti");
+
+        };
+
+        Events.RoomJoined += (sender, e) =>
+        {
+            string gamemode = e.Gamemode;
+            bool inModded = gamemode.ToUpper().Contains("MODDED");
+            StandMD.SetActive(inModded);
         };
 
         Events.RoomLeft += (sender, e) => StandMD.SetActive(false);
