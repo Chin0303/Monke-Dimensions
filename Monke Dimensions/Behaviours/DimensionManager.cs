@@ -51,9 +51,9 @@ internal class DimensionManager : MonoBehaviour
 #if DEBUG
         Debug.Log("-> Found Dimension(s): <-");
 #endif
-
-        string path = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions");
-        var dimensionFiles = Directory.GetFiles(path, "*.dimension");
+        // for my pookie bear decal(free)
+        string path = Path.Combine(Path.GetDirectoryName(typeof(Main).Assembly.Location), "Dimensions");
+        string[] dimensionFiles = Directory.GetFiles(path, "*.dimension");
 
         dimensionNames = new List<string>();
 

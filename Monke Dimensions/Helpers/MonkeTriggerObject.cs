@@ -7,7 +7,7 @@ public class MonkeTriggerObject : MonoBehaviour
 #if EDITOR
 
 #else
-    private void Start() => 
+    private void Awake() => 
         gameObject.layer = 18;
 
     private void OnTriggerEnter(Collider collider)

@@ -90,12 +90,7 @@ public class Button : MonoBehaviour
             {
                 response.EnsureSuccessStatusCode();
 
-                var filePath = Path.Combine($"{BepInEx.Paths.PluginPath}","Dimensions", $"{Item.selectedItem.MapName}.dimension");
-
-                if(Path.Combine($"{BepInEx.Paths.PluginPath}", "Dimensions") is null)
-                {
-                    filePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{Item.selectedItem.MapName}.dimension");
-                }
+                var filePath = Path.Combine(Path.GetDirectoryName(typeof(Main).Assembly.Location), "Dimensions", $"{Item.selectedItem.MapName}.dimension");
 
                 using (var ms = await response.Content.ReadAsStreamAsync())
                 using (var fs = File.Create(filePath))

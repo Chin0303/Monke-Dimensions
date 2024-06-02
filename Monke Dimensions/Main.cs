@@ -24,7 +24,7 @@ internal class Main : BaseUnityPlugin
     internal const string
         GUID = "chin.monkedimensions",
         NAME = "Monke Dimensions",
-        VERSION = "1.2.0";
+        VERSION = "1.2.2";
 
     internal Main()
     {
