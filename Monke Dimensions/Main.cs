@@ -39,6 +39,8 @@ internal class Main : BaseUnityPlugin
 
             var dimensionManager = new GameObject("Dimension Manager").AddComponent<DimensionManager>();
             StandMD = GameObject.Find("StandMD(Clone)");
+            StandMD.transform.position = new(-68.617f, 11.422f, -81.257f);
+            StandMD.transform.rotation = Quaternion.Euler(0, 116.5558f, 0);
             new GameObject("Dimension Teleport").AddComponent<TeleportDimension>().transform.SetParent(dimensionManager.gameObject.transform);
 
             Comps.Confetti = assetBundle.LoadAsset<GameObject>("Confetti");
