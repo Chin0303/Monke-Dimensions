@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Monke_Dimensions.Behaviours;
 
-internal class Comps : MonoBehaviour
+public class Comps : MonoBehaviour
 {
     public static GameObject LeftBtn, RightBtn, LoadBtn, BrowserButton, GarfieldButton, MainScreen;
     public static GameObject PagePrefab, ItemPrefab;
@@ -17,13 +17,6 @@ internal class Comps : MonoBehaviour
     public static Text AuthorText, NameText, DescriptionText, StatusText;
 
     public static GameObject Confetti, DownloadingText;
-
-    public static List<GameObject> EnviormentObjects = new List<GameObject>()
-    {
-        GameObject.Find("Environment Objects/LocalObjects_Prefab/Standard Sky/"),
-        GameObject.Find("Environment Objects/LocalObjects_Prefab/CityToSkyJungle/"),
-        GameObject.Find("Environment Objects/LocalObjects_Prefab/SkyJungleBottom/")
-    };
 
     public static void SetupComps()
     {

@@ -396,12 +396,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\DimensionEvents.cs" />
-    <Compile Include="API\DimensionTools.cs" />
     <Compile Include="AssetLoader.cs" />
+    <Compile Include="Behaviours\CallBacks.cs" />
     <Compile Include="Browser\DimensionBrowser.cs" />
     <Compile Include="Browser\Item.cs" />
+    <Compile Include="Editor\ChangeVelocity.cs" />
     <Compile Include="Editor\CustomSurface.cs" />
+    <Compile Include="Editor\Grabbables\GrabbableObject.cs" />
+    <Compile Include="Editor\Grabbables\GrabManager.cs" />
     <Compile Include="Editor\ToggleActiveState.cs" />
+    <Compile Include="Editor\WaterObject.cs" />
+    <Compile Include="Editor\ZeroGravity.cs" />
     <Compile Include="Helpers\AddonExtensions.cs" />
     <Compile Include="Helpers\MonkeTriggerObject.cs" />
     <Compile Include="Behaviours\Comps.cs" />

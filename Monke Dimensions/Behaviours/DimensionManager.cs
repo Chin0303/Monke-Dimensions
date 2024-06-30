@@ -9,9 +9,11 @@ using UnityEngine;
 using Monke_Dimensions.Interaction;
 using Monke_Dimensions.Models;
 using System.Threading.Tasks;
-using HarmonyLib;
-using Monke_Dimensions.Editor;
 using Monke_Dimensions.Browser;
+using Monke_Dimensions.Editor;
+using System.Reflection;
+using BepInEx;
+using Photon.Pun;
 
 namespace Monke_Dimensions.Behaviours;
 
@@ -39,6 +41,13 @@ internal class DimensionManager : MonoBehaviour
     internal DimensionManager()
     {
         Instance = this;
+        if (IncompatibleModInstalled())
+        {
+            Comps.AuthorText.text = "Please delete your mod menu(s) or cosmetx";
+            Comps.NameText.text = "If you believe this is a mistake";
+            Comps.DescriptionText.text = "Please say 'i got error 404' in the discord server";
+            return;
+        }
         loadedDimensionObj = new GameObject("LoadedDimension");
         ButtonSetup();
         LoadDimensions();
@@ -49,9 +58,8 @@ internal class DimensionManager : MonoBehaviour
         Garfield = GameObject.Find("Garfield");
         Garfield.SetActive(false);
 #if DEBUG
-        Debug.Log("-> Found Dimension(s): <-");
+        Main.Logger.LogInfo("-> Found Dimension(s): <-");
 #endif
-        // for my pookie bear decal(free)
         string path = Path.Combine(Path.GetDirectoryName(typeof(Main).Assembly.Location), "Dimensions");
         string[] dimensionFiles = Directory.GetFiles(path, "*.dimension");
 
@@ -85,7 +93,7 @@ internal class DimensionManager : MonoBehaviour
 
             if (packageEntry == null)
             {
-                Debug.LogError("Invalid dimension: " + currentPath);
+                Main.Logger.LogError("Invalid dimension: " + currentPath);
                 return;
             }
 
@@ -163,8 +171,8 @@ internal class DimensionManager : MonoBehaviour
 
         GameObject.Find(currentLoadedDimensionObjects.First().gameObject.name + "(Clone)").transform.position = new Vector3(0f, 0, 0f);
 
-        loadedDimensionObj.transform.position = new Vector3(0f, 650f, 0f);
-        Camera.main.farClipPlane += 25000;
+        loadedDimensionObj.transform.position = new Vector3(650f, 200f, 0f);
+        Camera.main.farClipPlane += 7500;
         TeleportDimension.OnTeleport(currentDimensionPackage);
     }
 
@@ -185,13 +193,8 @@ internal class DimensionManager : MonoBehaviour
 
     public void LoadSelectedDimension(string dimensionName)
     {
-        ZoneManagement zoneManager = FindObjectOfType<ZoneManagement>();
-        ZoneData FindZoneData(GTZone zone) => (ZoneData)AccessTools.Method(typeof(ZoneManagement), "GetZoneData").Invoke(zoneManager, new object[] { zone });
         if (inDimension)
         {
-            foreach (GameObject EnviormentObject in Comps.EnviormentObjects) EnviormentObject.SetActive(inDimension);
-
-            FindZoneData(GTZone.forest).rootGameObjects[1].SetActive(inDimension);
             TeleportDimension.ReturnToMonke(currentDimensionPackage);
             UnloadCurrentDimension();
 
@@ -200,7 +203,7 @@ internal class DimensionManager : MonoBehaviour
         else
         {
 
-            string dimensionFilePath = Path.Combine(BepInEx.Paths.PluginPath, "Dimensions", $"{dimensionName}.dimension");
+            string dimensionFilePath = Path.Combine(Paths.PluginPath, "Dimensions", $"{dimensionName}.dimension");
             if (!File.Exists(dimensionFilePath))
             {
                 dimensionFilePath = Path.Combine(Path.GetDirectoryName(typeof(DimensionManager).Assembly.Location), "Dimensions", $"{dimensionName}.dimension");
@@ -209,21 +212,42 @@ internal class DimensionManager : MonoBehaviour
             currentDimensionPackage = currentViewingPackage;
             LoadAssets(dimensionFilePath, currentDimensionPackage.Name);
             inDimension = true;
-            foreach (GameObject EnviormentObject in Comps.EnviormentObjects) EnviormentObject.SetActive(false);
-            FindZoneData(GTZone.forest).rootGameObjects[1].SetActive(false);
         }
+    }
+    
+
+    private bool IncompatibleModInstalled()
+    {
+        foreach (PluginInfo pluginInfo in BepInEx.Bootstrap.Chainloader.PluginInfos.Values)
+        {
+            if (pluginInfo.Metadata.GUID.ToLower().Contains("iidk") ||
+                pluginInfo.Metadata.GUID.ToLower().Contains("menu") ||
+                pluginInfo.Metadata.GUID.ToLower().Contains("cosmetx") ||
+                pluginInfo.Metadata.GUID.ToLower().Contains("shibagt") ||
+                pluginInfo.Metadata.GUID.ToLower().Contains("displyy"))
+            {
+                Main.Logger.LogInfo($"Cheat found: {pluginInfo.Metadata.GUID}");
+                return true;
+            }
+        }
+        return false;
     }
 
     public void UnloadCurrentDimension()
     {
+        foreach(WaterObject water in FindObjectsOfType<WaterObject>())
+            Destroy(water.ogWater);
+
         foreach (Transform child in loadedDimensionObj.transform)
         {
             Destroy(child.gameObject);
         }
+
         currentLoadedDimensionObjects = null;
         inDimension = false;
         loadedDimensionObj.transform.position = new Vector3(0f, 0f, 0f);
-        Camera.main.farClipPlane -= 25000f;
+        GameObject.Find("Environment Objects/LocalObjects_Prefab/").SetActive(true);
+        Camera.main.farClipPlane -= 7500;
     }
 
     public void SwitchPage(int direction)

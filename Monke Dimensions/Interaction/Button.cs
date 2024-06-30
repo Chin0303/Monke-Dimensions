@@ -21,7 +21,7 @@ public class Button : MonoBehaviour
 
     private async void OnTriggerEnter(Collider collider)
     {
-        if ( debounceTime >= Time.time) return;
+        if (debounceTime >= Time.time) return;
         var hand = collider.GetComponentInParent<GorillaTriggerColliderHandIndicator>();
         if (DimensionBrowser.inBrowser && collider.TryGetComponent(out hand))
         {

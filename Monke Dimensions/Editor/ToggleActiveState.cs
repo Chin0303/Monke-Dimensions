@@ -1,50 +1,56 @@
-﻿#if EDITOR
+﻿using UnityEngine;
+using Monke_Dimensions.Helpers;
+using ExitGames.Client.Photon;
+using Monke_Dimensions.Behaviours;
+using Photon.Pun;
 
-#else
+using Photon.Realtime;
+
+
+#if !EDITOR
 using Monke_Dimensions.API;
 #endif
-using Monke_Dimensions.Helpers;
-using UnityEngine;
 
 namespace Monke_Dimensions.Editor;
 
 public class ToggleActiveState : MonkeTriggerObject
 {
-    [Tooltip("Every toggle active state trigger must have an UNIQUE id")]
-    public string uniqueID;
     public GameObject ObjectToToggle;
-    private bool isOn, eventOnCooldown;
-    private float lastEventTime;
-    private const float eventCooldown = 0.15f;
-#if EDITOR
+    private bool isOn;
 
-#else
-    private void Start() => isOn = ObjectToToggle.activeSelf;
+    public bool networked;
+    public string networkID;
+
+    private void Awake() =>
+        isOn = gameObject.activeSelf;
+
+#if !EDITOR
+
     public override void MonkeTrigger(Collider collider)
     {
-        if (eventOnCooldown || Time.time - lastEventTime < eventCooldown)
-        {
-            Debug.Log("Event is on cooldown.");
-            return;
-        }
-
-        lastEventTime = Time.time;
+        base.MonkeTrigger(collider);
         isOn = !isOn;
+
         ObjectToToggle.SetActive(isOn);
+
+        if (networked)
+            NetworkStuff();
+
         DimensionEvents.OnDimensionTriggerEvent(TriggerEvent.ToggleActiveState, this.gameObject, ObjectToToggle, isOn);
-
-        StartCooldown();
     }
 
-    private void StartCooldown()
+    private void NetworkStuff()
     {
-        eventOnCooldown = true;
-        Invoke(nameof(ResetCooldown), eventCooldown);
+        object[] content = new object[]
+        {
+            EventCodes.ToggleActiveState,
+            networkID,
+            isOn
+        };
+        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.All };
+
+        PhotonNetwork.RaiseEvent((byte)EventCodes.EventCode, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
-    private void ResetCooldown()
-    {
-        eventOnCooldown = false;
-    }
 #endif
 }
