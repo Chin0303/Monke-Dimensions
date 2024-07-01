@@ -401,6 +401,7 @@
     <Compile Include="Browser\DimensionBrowser.cs" />
     <Compile Include="Browser\Item.cs" />
     <Compile Include="Editor\ChangeVelocity.cs" />
+    <Compile Include="Editor\ClimableObject.cs" />
     <Compile Include="Editor\CustomSurface.cs" />
     <Compile Include="Editor\Grabbables\GrabbableObject.cs" />
     <Compile Include="Editor\Grabbables\GrabManager.cs" />

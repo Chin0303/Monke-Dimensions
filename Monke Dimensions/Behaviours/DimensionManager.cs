@@ -38,6 +38,8 @@ internal class DimensionManager : MonoBehaviour
 
     public GameObject Garfield;
 
+
+    public GameObject LocalObjectsGameObject;
     internal DimensionManager()
     {
         Instance = this;
@@ -55,6 +57,7 @@ internal class DimensionManager : MonoBehaviour
 
     public void LoadDimensions()
     {
+        LocalObjectsGameObject = GameObject.Find("Environment Objects/LocalObjects_Prefab/");
         Garfield = GameObject.Find("Garfield");
         Garfield.SetActive(false);
 #if DEBUG
@@ -116,7 +119,8 @@ internal class DimensionManager : MonoBehaviour
             InstantiateDimensions(cachedAssetBundle);
             return;
         }
-
+        Comps.DownloadingText.SetActive(true);
+        Comps.DownloadingText.GetComponent<UnityEngine.UI.Text>().text = "Loading...";
         byte[] zipBytes = File.ReadAllBytes(zipFilePath);
         byte[] bundleBytes;
 
@@ -161,6 +165,9 @@ internal class DimensionManager : MonoBehaviour
 
     private void InstantiateDimensions(AssetBundle assetBundle)
     {
+        if (!Main.inModded)
+            return;
+
         currentLoadedDimensionObjects = assetBundle.LoadAllAssets<GameObject>();
 
         foreach (GameObject loadedObject in currentLoadedDimensionObjects)
@@ -174,6 +181,10 @@ internal class DimensionManager : MonoBehaviour
         loadedDimensionObj.transform.position = new Vector3(650f, 200f, 0f);
         Camera.main.farClipPlane += 7500;
         TeleportDimension.OnTeleport(currentDimensionPackage);
+        inDimension = true;
+        /*LocalObjectsGameObject.SetActive(false);*/
+        Comps.DownloadingText.SetActive(false);
+        Comps.DownloadingText.GetComponent<UnityEngine.UI.Text>().text = "Downloading...";
     }
 
     private void SetupSurface(GameObject obj)
@@ -211,7 +222,6 @@ internal class DimensionManager : MonoBehaviour
 
             currentDimensionPackage = currentViewingPackage;
             LoadAssets(dimensionFilePath, currentDimensionPackage.Name);
-            inDimension = true;
         }
     }
     
@@ -226,7 +236,9 @@ internal class DimensionManager : MonoBehaviour
                 pluginInfo.Metadata.GUID.ToLower().Contains("shibagt") ||
                 pluginInfo.Metadata.GUID.ToLower().Contains("displyy"))
             {
-                Main.Logger.LogInfo($"Cheat found: {pluginInfo.Metadata.GUID}");
+                if (pluginInfo.Metadata.GUID == "com.wryser.gorillatag.gorillamenu")
+                    return false;
+
                 return true;
             }
         }
@@ -246,7 +258,7 @@ internal class DimensionManager : MonoBehaviour
         currentLoadedDimensionObjects = null;
         inDimension = false;
         loadedDimensionObj.transform.position = new Vector3(0f, 0f, 0f);
-        GameObject.Find("Environment Objects/LocalObjects_Prefab/").SetActive(true);
+        LocalObjectsGameObject.SetActive(true);
         Camera.main.farClipPlane -= 7500;
     }
 

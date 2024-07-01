@@ -13,6 +13,9 @@ using System.Reflection;
 using BepInEx.Logging;
 using Monke_Dimensions.Editor.Grabbables;
 using Photon.Pun;
+using GorillaLocomotion.Gameplay;
+using GorillaLocomotion.Climbing;
+using Monke_Dimensions.Editor;
 namespace Monke_Dimensions;
 
 [BepInPlugin(GUID, NAME, VERSION)]
@@ -24,13 +27,16 @@ internal class Main : BaseUnityPlugin
     internal static GameObject StandMD;
 
     private GameObject Manegerl;
+    private DimensionManager DimensionInstance;
 
     public static ManualLogSource Logger;
-    // change the
+
+    public static bool inModded = true;
+
     private const string
         GUID = "chin.monkedimensions",
         NAME = "Monke Dimensions",
-        VERSION = "1.3.0";
+        VERSION = "1.3.1.0";
 
     internal Main()
     {
@@ -45,6 +51,7 @@ internal class Main : BaseUnityPlugin
             Comps.SetupComps();
 
             var dimensionManager = new GameObject("Dimension Manager").AddComponent<DimensionManager>();
+            DimensionInstance = dimensionManager.GetComponent<DimensionManager>();
             StandMD = GameObject.Find("StandMD(Clone)");
             StandMD.transform.position = new(-68.617f, 11.422f, -81.257f);
             StandMD.transform.rotation = Quaternion.Euler(0, 116.5558f, 0);
@@ -58,20 +65,24 @@ internal class Main : BaseUnityPlugin
         Events.RoomJoined += (sender, e) =>
         {
             string gamemode = e.Gamemode;
-            bool inModded = gamemode.ToUpper().Contains("MODDED");
+            inModded = gamemode.ToUpper().Contains("MODDED");
             StandMD.SetActive(inModded);
+            if(DimensionManager.Instance.inDimension && !inModded)
+            {
+                DimensionInstance.LoadSelectedDimension(DimensionInstance.dimensionNames[DimensionInstance.currentPage]);
+                TeleportDimension.ReturnToMonke(DimensionInstance.currentDimensionPackage);
+            }
         };
 
         DimensionEvents.OnDimensionTriggerEvent += (a, b, c, d) => { };
 
-        Events.RoomLeft += (sender, e) => StandMD.SetActive(false);
+        Events.RoomLeft += (sender, e) => { StandMD.SetActive(false); inModded = true; };
 
         Action<string> value = Logger.LogInfo;
 
         DimensionEvents.OnDimensionEnter += value => { if (!PhotonNetwork.InRoom) return; Manegerl = new GameObject("MeowManager").AddComponent<GrabManager>().gameObject; };
         DimensionEvents.OnDimensionLeave += value => { Manegerl?.SafeDestroy(); };
     }
-
 
     public AssetBundle LoadAssetBundle(string path)
     {
