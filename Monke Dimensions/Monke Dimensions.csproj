@@ -415,6 +415,7 @@
     <Compile Include="Behaviours\TeleportDimension.cs" />
     <Compile Include="Interaction\ButtonType.cs" />
     <Compile Include="Interaction\Button.cs" />
+    <Compile Include="LatestVersion.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Models\DimensionDescriptor.cs" />
     <Compile Include="Models\DimensionPackage.cs" />
@@ -423,7 +424,9 @@
     <Compile Include="Editor\TeleportPlayer.cs" />
     <Compile Include="TriggerEvent.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="VERSION" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\stand" />
   </ItemGroup>

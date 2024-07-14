@@ -13,9 +13,7 @@ using System.Reflection;
 using BepInEx.Logging;
 using Monke_Dimensions.Editor.Grabbables;
 using Photon.Pun;
-using GorillaLocomotion.Gameplay;
-using GorillaLocomotion.Climbing;
-using Monke_Dimensions.Editor;
+
 namespace Monke_Dimensions;
 
 [BepInPlugin(GUID, NAME, VERSION)]
@@ -36,14 +34,14 @@ internal class Main : BaseUnityPlugin
     private const string
         GUID = "chin.monkedimensions",
         NAME = "Monke Dimensions",
-        VERSION = "1.3.1.0";
+        VERSION = "1.3.2";
 
     internal Main()
     {
         Logger = base.Logger;
         new Harmony(GUID).PatchAll(typeof(Main).Assembly);
 
-        Utilla.Events.GameInitialized += (sender, e) =>
+        Utilla.Events.GameInitialized += async (sender, e) =>
         {
             assetBundle = LoadAssetBundle("Monke_Dimensions.Resources.stand");
             Instantiate(assetBundle.LoadAsset<GameObject>("StandMD"));
@@ -53,13 +51,11 @@ internal class Main : BaseUnityPlugin
             var dimensionManager = new GameObject("Dimension Manager").AddComponent<DimensionManager>();
             DimensionInstance = dimensionManager.GetComponent<DimensionManager>();
             StandMD = GameObject.Find("StandMD(Clone)");
-            StandMD.transform.position = new(-68.617f, 11.422f, -81.257f);
-            StandMD.transform.rotation = Quaternion.Euler(0, 116.5558f, 0);
             new GameObject("Dimension Teleport").AddComponent<TeleportDimension>().transform.SetParent(dimensionManager.gameObject.transform);
-            
+
             Comps.Confetti = assetBundle.LoadAsset<GameObject>("Confetti");
-            StandMD.transform.position = new(-68.617f, 11.422f, -81.257f);
-            StandMD.transform.rotation = Quaternion.Euler(0, 116.5558f, 0);
+            StandMD.transform.position = new(-64.9861f, 11.422f, -84.0595f);
+            StandMD.transform.rotation = Quaternion.Euler(0, 318.3739f, 0);
         };
 
         Events.RoomJoined += (sender, e) =>
@@ -67,7 +63,7 @@ internal class Main : BaseUnityPlugin
             string gamemode = e.Gamemode;
             inModded = gamemode.ToUpper().Contains("MODDED");
             StandMD.SetActive(inModded);
-            if(DimensionManager.Instance.inDimension && !inModded)
+            if (DimensionManager.Instance.inDimension && !inModded)
             {
                 DimensionInstance.LoadSelectedDimension(DimensionInstance.dimensionNames[DimensionInstance.currentPage]);
                 TeleportDimension.ReturnToMonke(DimensionInstance.currentDimensionPackage);
@@ -96,6 +92,7 @@ internal class Main : BaseUnityPlugin
     private void OnJoin() => StandMD.SetActive(true);
     [ModdedGamemodeLeave]
     private void OnLeave() => StandMD.SetActive(false);
+    
 }
 
 #endif

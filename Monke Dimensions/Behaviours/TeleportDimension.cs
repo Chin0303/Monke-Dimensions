@@ -31,7 +31,7 @@ internal class TeleportDimension : MonoBehaviour
     {
         Vector3 SpawnStump = new Vector3(-64.6577f, 11.1684f, -83.0683f);
         TeleportPatch.TeleportPlayer(SpawnStump, 0f, true);
-        GameObject.Find("StandMD(Clone)").transform.position = new Vector3(-68.617f, 11.422f, -81.257f);
+        GameObject.Find("StandMD(Clone)").transform.position = new Vector3(-64.9861f, 11.422f, -84.0595f);
         DimensionEvents.OnDimensionLeave($"{packg.Name}, {packg.Author}");
     }
 }

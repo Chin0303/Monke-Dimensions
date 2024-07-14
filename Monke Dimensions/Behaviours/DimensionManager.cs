@@ -11,9 +11,7 @@ using Monke_Dimensions.Models;
 using System.Threading.Tasks;
 using Monke_Dimensions.Browser;
 using Monke_Dimensions.Editor;
-using System.Reflection;
 using BepInEx;
-using Photon.Pun;
 
 namespace Monke_Dimensions.Behaviours;
 
@@ -43,6 +41,7 @@ internal class DimensionManager : MonoBehaviour
     internal DimensionManager()
     {
         Instance = this;
+
         if (IncompatibleModInstalled())
         {
             Comps.AuthorText.text = "Please delete your mod menu(s) or cosmetx";
@@ -50,6 +49,14 @@ internal class DimensionManager : MonoBehaviour
             Comps.DescriptionText.text = "Please say 'i got error 404' in the discord server";
             return;
         }
+
+        if (LatestVersion.NeedToUpdate()) 
+        {
+            Comps.AuthorText.text = "There is a new update for Monke Dimensions.";
+            Comps.NameText.text = "Please update to the latest version";
+            Comps.DescriptionText.text = "to experience the latest features and fixes.";
+        }
+
         loadedDimensionObj = new GameObject("LoadedDimension");
         ButtonSetup();
         LoadDimensions();
